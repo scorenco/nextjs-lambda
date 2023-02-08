@@ -13,6 +13,7 @@ interface Props {
 	hostedZone?: string
 	domainNamePrefix?: string
 	redirectFromApex?: boolean
+	certificateArn?: string
 }
 
 const cdkExecutable = require.resolve('aws-cdk/bin/cdk')
@@ -30,6 +31,7 @@ export const deployHandler = async ({
 	hostedZone,
 	customApiDomain,
 	redirectFromApex,
+	certificateArn,
 }: Props) => {
 	// All paths are absolute.
 	const cdkApp = `node ${appPath}`
@@ -46,6 +48,7 @@ export const deployHandler = async ({
 		...(domainNamePrefix && { DNS_PREFIX: domainNamePrefix }),
 		...(customApiDomain && { CUSTOM_API_DOMAIN: customApiDomain }),
 		...(redirectFromApex && { REDIRECT_FROM_APEX: redirectFromApex.toString() }),
+		...(certificateArn && { CERTIFICATE_ARN: certificateArn }),
 	}
 
 	if (bootstrap) {

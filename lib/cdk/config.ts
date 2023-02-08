@@ -11,6 +11,7 @@ const RawEnvConfig = cleanEnv(process.env, {
 	HOSTED_ZONE: str({ default: undefined }),
 	DNS_PREFIX: str({ default: undefined }),
 	CUSTOM_API_DOMAIN: str({ default: undefined }),
+	CERTIFICATE_ARN: str({ default: undefined }),
 	REDIRECT_FROM_APEX: bool({ default: false }),
 })
 
@@ -22,6 +23,7 @@ export const envConfig = {
 	imageLambdaTimeout: RawEnvConfig.IMAGE_LAMBDA_TIMEOUT,
 	hostedZone: RawEnvConfig.HOSTED_ZONE,
 	dnsPrefix: RawEnvConfig.DNS_PREFIX,
+	certificateArn: RawEnvConfig.CERTIFICATE_ARN,
 	customApiDomain: RawEnvConfig.CUSTOM_API_DOMAIN,
 	redirectFromApex: RawEnvConfig.REDIRECT_FROM_APEX,
 }

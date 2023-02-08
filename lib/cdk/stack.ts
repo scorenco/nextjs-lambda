@@ -1,6 +1,6 @@
 import { HttpApi } from '@aws-cdk/aws-apigatewayv2-alpha'
 import { App, Stack } from 'aws-cdk-lib'
-import { ICertificate } from 'aws-cdk-lib/aws-certificatemanager'
+import { Certificate, ICertificate } from 'aws-cdk-lib/aws-certificatemanager'
 import { IDistribution } from 'aws-cdk-lib/aws-cloudfront'
 import { HttpOrigin } from 'aws-cdk-lib/aws-cloudfront-origins'
 import { Function } from 'aws-cdk-lib/aws-lambda'
@@ -70,7 +70,9 @@ export class NextStandaloneStack extends Stack {
 			serverBasePath: config.apigwServerPath,
 		})
 
-		if (!!this.hostedZone && !!this.domainName) {
+		if (!!config.certificateArn) {
+			this.cfnCertificate = Certificate.fromCertificateArn(this, config.certificateArn.split('/')?.[1], config.certificateArn)
+		} else if (!!this.hostedZone && !!this.domainName) {
 			this.cfnCertificate = this.setupCfnCertificate({
 				hostedZone: this.hostedZone,
 				domainName: this.domainName,

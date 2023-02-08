@@ -63,6 +63,7 @@ program
 	.option('--domainNamePrefix <prefix>', 'Prefix for creating DNS records, if left undefined, hostedZone will be used (example: app).', undefined)
 	.option('--customApiDomain <domain>', 'Domain to forward the requests to /api routes, by default API routes will be handled by the server lambda.', undefined)
 	.option('--redirectFromApex', 'Redirect from apex domain to specified address.', false)
+	.option('--certificateArn <certificateArn>', 'Force a certificate.', undefined)
 	.action(async (options) => {
 		console.log('Our config is: ', options)
 		const {
@@ -78,6 +79,7 @@ program
 			domainNamePrefix,
 			customApiDomain,
 			redirectFromApex,
+			certificateArn,
 		} = options
 
 		wrapProcess(
@@ -94,6 +96,7 @@ program
 				domainNamePrefix,
 				customApiDomain,
 				redirectFromApex,
+				certificateArn,
 			}),
 		)
 	})

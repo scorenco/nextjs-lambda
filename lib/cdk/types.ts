@@ -24,4 +24,5 @@ export interface CustomStackProps extends StackProps {
 	customApiDomain?: string
 	redirectFromApex?: boolean
 	imageSettings: ImageSettings
+	certificateArn?: string
 }
