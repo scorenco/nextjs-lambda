@@ -20,6 +20,7 @@ new NextStandaloneStack(app, envConfig.stackName, {
 	imageLayerZipPath: optimizerLayerPath,
 	imageLambdaHash: `${name}_${version}`,
 	customImageHandler: handler,
+	imageSettings: require(path.resolve(commandCwd, './next.out/image-settings.json')),
 
 	// Lambda & AWS config
 	apigwServerPath: '/_server',

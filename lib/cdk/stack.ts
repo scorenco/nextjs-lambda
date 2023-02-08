@@ -6,7 +6,7 @@ import { HttpOrigin } from 'aws-cdk-lib/aws-cloudfront-origins'
 import { Function } from 'aws-cdk-lib/aws-lambda'
 import { HostedZone, IHostedZone } from 'aws-cdk-lib/aws-route53'
 import { Bucket } from 'aws-cdk-lib/aws-s3'
-import { CustomStackProps } from './types'
+import { ImageSettings, CustomStackProps } from './types'
 import { setupApiGateway, SetupApiGwProps } from './utils/apiGw'
 import { setupCfnCertificate, SetupCfnCertificateProps } from './utils/cfnCertificate'
 import { setupCfnDistro, SetupCfnDistroProps } from './utils/cfnDistro'
@@ -25,6 +25,7 @@ export class NextStandaloneStack extends Stack {
 	cfnCertificate?: ICertificate
 	hostedZone?: IHostedZone
 	domainName?: string
+	imageSettings?: ImageSettings
 
 	constructor(scope: App, id: string, config: CustomStackProps) {
 		super(scope, id, config)
@@ -40,6 +41,8 @@ export class NextStandaloneStack extends Stack {
 		console.log('Normalized domain name:', this.domainName)
 
 		this.assetsBucket = this.setupAssetsBucket()
+
+		this.imageSettings = config.imageSettings
 
 		this.imageLambda = this.setupImageLambda({
 			codePath: config.imageHandlerZipPath,
@@ -82,6 +85,7 @@ export class NextStandaloneStack extends Stack {
 			domainName: this.domainName,
 			certificate: this.cfnCertificate,
 			customApiOrigin: config.customApiDomain ? new HttpOrigin(config.customApiDomain) : undefined,
+			imageSettings: this.imageSettings,
 		})
 
 		this.uploadStaticAssets({

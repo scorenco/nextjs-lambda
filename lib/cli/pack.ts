@@ -1,4 +1,4 @@
-import { mkdirSync, rmSync, writeFileSync } from 'fs'
+import { mkdirSync, readdirSync, rmSync, statSync, writeFileSync } from 'fs'
 import { tmpdir } from 'os'
 import path from 'path'
 import { nextServerConfigRegex } from '../consts'
@@ -47,6 +47,19 @@ export const packHandler = async ({ handlerPath, outputFolder, publicFolder, sta
 	// Clean output directory before continuing
 	rmSync(outputFolder, { force: true, recursive: true })
 	mkdirSync(outputFolder)
+
+	// Create image settings
+	const imageSettingsPath = path.resolve(outputFolder, 'image-settings.json')
+	const imageSettings = {
+		publicFilePaths: readdirSync(publicFolder).map((name) => {
+			if (statSync(path.join(publicFolder, name)).isDirectory()) {
+				return `${name}/*`
+			}
+
+			return name
+		}),
+	}
+	writeFileSync(imageSettingsPath, JSON.stringify(imageSettings, null, 2), 'utf-8')
 
 	// Zip dependencies from standalone output in a layer-compatible format.
 	// In case monorepo is used, include nested node_modules folder which might include additional dependencies.
@@ -118,6 +131,10 @@ export const packHandler = async ({ handlerPath, outputFolder, publicFolder, sta
 				isFile: true,
 				path: configPath,
 				name: 'config.json',
+			},
+			{
+				path: path.resolve(publicFolder, 'locales'),
+				dir: 'public/locales',
 			},
 		],
 	})

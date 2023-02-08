@@ -1,5 +1,9 @@
 import { StackProps } from 'aws-cdk-lib'
 
+export interface ImageSettings {
+	publicFilePaths: string[]
+}
+
 export interface CustomStackProps extends StackProps {
 	apigwServerPath: string
 	apigwImagePath: string
@@ -19,4 +23,5 @@ export interface CustomStackProps extends StackProps {
 	dnsPrefix?: string
 	customApiDomain?: string
 	redirectFromApex?: boolean
+	imageSettings: ImageSettings
 }

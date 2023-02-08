@@ -14,6 +14,7 @@ import {
 } from 'aws-cdk-lib/aws-cloudfront'
 import { HttpOrigin, S3Origin } from 'aws-cdk-lib/aws-cloudfront-origins'
 import { Bucket } from 'aws-cdk-lib/aws-s3'
+import { ImageSettings } from '../types'
 
 export interface SetupCfnDistroProps {
 	domainName?: string
@@ -23,11 +24,12 @@ export interface SetupCfnDistroProps {
 	serverBasePath: string
 	assetsBucket: Bucket
 	customApiOrigin?: IOrigin
+	imageSettings?: ImageSettings
 }
 
 export const setupCfnDistro = (
 	scope: Stack,
-	{ apiGateway, imageBasePath, serverBasePath, assetsBucket, domainName, certificate, customApiOrigin }: SetupCfnDistroProps,
+	{ apiGateway, imageBasePath, serverBasePath, assetsBucket, domainName, imageSettings, certificate, customApiOrigin }: SetupCfnDistroProps,
 ) => {
 	const apiGwDomainName = `${apiGateway.apiId}.execute-api.${scope.region}.amazonaws.com`
 
@@ -109,6 +111,20 @@ export const setupCfnDistro = (
 				origin: assetsOrigin,
 				cachePolicy: assetsCachePolicy,
 			},
+			...imageSettings?.publicFilePaths?.reduce((acc, pathPattern: string) => {
+				if (['assets/*', '_next/*'].includes(pathPattern)) {
+					return acc
+				}
+
+				return {
+					...acc,
+					[pathPattern]: {
+						...defaultOptions,
+						origin: assetsOrigin,
+						cachePolicy: assetsCachePolicy,
+					},
+				}
+			}, {}),
 		},
 	})
 
