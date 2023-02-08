@@ -42,33 +42,37 @@ export const setupCfnDistro = (
 		allowedMethods: AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
 	}
 
-	const defaultCacheOptions = {
-		headerBehavior: CacheHeaderBehavior.allowList('accept', 'accept-language', 'content-language', 'content-type', 'user-agent', 'authorization'),
-		queryStringBehavior: CacheQueryStringBehavior.all(),
-		cookieBehavior: CacheCookieBehavior.all(),
-	}
+	// const defaultCacheOptions = {
+	// 	headerBehavior: CacheHeaderBehavior.allowList('accept', 'accept-language', 'content-language', 'content-type', 'user-agent', 'authorization'),
+	// 	queryStringBehavior: CacheQueryStringBehavior.all(),
+	// 	cookieBehavior: CacheCookieBehavior.all(),
+	// }
 
-	const imagesCachePolicy = new CachePolicy(scope, 'NextImageCachePolicy', {
-		queryStringBehavior: CacheQueryStringBehavior.all(),
-		enableAcceptEncodingGzip: true,
-		defaultTtl: Duration.days(30),
-	})
+	const imagesCachePolicy = CachePolicy.fromCachePolicyId(scope, 'NextImageCachePolicy', 'b0b8475c-e5ad-48ec-a9aa-ab4edce43324')
+	// const imagesCachePolicy = new CachePolicy(scope, 'NextImageCachePolicy', {
+	// 	queryStringBehavior: CacheQueryStringBehavior.all(),
+	// 	enableAcceptEncodingGzip: true,
+	// 	defaultTtl: Duration.days(30),
+	// })
 
-	const serverCachePolicy = new CachePolicy(scope, 'NextServerCachePolicy', {
-		...defaultCacheOptions,
-	})
+	const serverCachePolicy = CachePolicy.fromCachePolicyId(scope, 'NextServerCachePolicy', 'dde765f7-44f6-4582-a848-865995f4d089')
+	// const serverCachePolicy = new CachePolicy(scope, 'NextServerCachePolicy', {
+	// 	...defaultCacheOptions,
+	// })
 
-	const apiCachePolicy = new CachePolicy(scope, 'NextApiCachePolicy', {
-		...defaultCacheOptions,
-		maxTtl: Duration.seconds(0),
-	})
+	const apiCachePolicy = CachePolicy.fromCachePolicyId(scope, 'NextApiCachePolicy', '9aec2d57-3eb2-4ee6-8368-140faf94e0ba')
+	// const apiCachePolicy = new CachePolicy(scope, 'NextApiCachePolicy', {
+	// 	...defaultCacheOptions,
+	// 	maxTtl: Duration.seconds(0),
+	// })
 
 	// Public folder persists names so we are making default TTL lower for cases when invalidation does not happen.
-	const assetsCachePolicy = new CachePolicy(scope, 'NextPublicCachePolicy', {
-		queryStringBehavior: CacheQueryStringBehavior.all(),
-		enableAcceptEncodingGzip: true,
-		defaultTtl: Duration.hours(12),
-	})
+	const assetsCachePolicy = CachePolicy.fromCachePolicyId(scope, 'NextPublicCachePolicy', 'f5792294-8244-4334-bb16-a9d8a4b26ed3')
+	// const assetsCachePolicy = new CachePolicy(scope, 'NextPublicCachePolicy', {
+	// 	queryStringBehavior: CacheQueryStringBehavior.all(),
+	// 	enableAcceptEncodingGzip: true,
+	// 	defaultTtl: Duration.hours(12),
+	// })
 
 	// We don't use LambdaFunctionAssociation as that's meant only for Lambda@Edge.
 	// Caching is optinionated to work out-of-the-box, for granular access and customization, create your own cache policies.
@@ -130,6 +134,7 @@ export const setupCfnDistro = (
 
 	new CfnOutput(scope, 'cfnDistroUrl', { value: cfnDistro.distributionDomainName })
 	new CfnOutput(scope, 'cfnDistroId', { value: cfnDistro.distributionId })
+	new CfnOutput(scope, 'domainName', { value: domainName || '<empty>' })
 
 	return cfnDistro
 }
