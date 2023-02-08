@@ -32,6 +32,8 @@ export class NextStandaloneStack extends Stack {
 
 		console.log("CDK's config:", config)
 
+		const enabledRoute53 = config.hostedZone?.endsWith('.ch')
+
 		if (config.hostedZone) {
 			this.hostedZone = HostedZone.fromLookup(this, 'HostedZone_certificate', { domainName: config.hostedZone })
 			this.domainName = config.dnsPrefix ? `${config.dnsPrefix}.${config.hostedZone}` : config.hostedZone
@@ -96,7 +98,7 @@ export class NextStandaloneStack extends Stack {
 			cfnDistribution: this.cfnDistro,
 		})
 
-		if (!!this.hostedZone && !!this.domainName) {
+		if (enabledRoute53 && !!this.hostedZone && !!this.domainName) {
 			this.setupDnsRecords({
 				cfnDistro: this.cfnDistro,
 				hostedZone: this.hostedZone,
